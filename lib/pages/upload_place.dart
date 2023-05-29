@@ -116,11 +116,6 @@ class _UploadPlaceState extends State<UploadPlace> {
   Future saveToDatabase() async {
     final DocumentReference ref =
         firestore.collection(collectionName).doc(_timestamp);
-    final DocumentReference ref1 = firestore
-        .collection(collectionName)
-        .doc(_timestamp)
-        .collection('travel guide')
-        .doc(_timestamp);
 
     var _placeData = {
       'state': stateSelection,
@@ -135,21 +130,14 @@ class _UploadPlaceState extends State<UploadPlace> {
       'loves': _loves,
       'comments count': _commentsCount,
       'date': _date,
-      'timestamp': _timestamp
+      'timestamp': _timestamp,
+      '_geoloc': {
+        'lat': double.parse(latCtrl.text),
+        'lng': double.parse(lngCtrl.text),
+      }
     };
 
-    var _guideData = {
-      'startpoint name': startpointNameCtrl.text,
-      'endpoint name': endpointNameCtrl.text,
-      'startpoint lat': double.parse(startpointLatCtrl.text),
-      'startpoint lng': double.parse(startpointLngCtrl.text),
-      'endpoint lat': double.parse(endpointLatCtrl.text),
-      'endpoint lng': double.parse(endpointLngCtrl.text),
-      'price': priceCtrl.text,
-      'paths': paths
-    };
-
-    await ref.set(_placeData).then((value) => ref1.set(_guideData));
+    await ref.set(_placeData);
   }
 
   handlePreview() async {
@@ -323,199 +311,6 @@ class _UploadPlaceState extends State<UploadPlace> {
                   if (value.isEmpty) return 'Value is empty';
                   return null;
                 },
-              ),
-              SizedBox(
-                height: 50,
-              ),
-              Text(
-                'Travel Guide Details',
-                style: TextStyle(fontSize: 30, fontWeight: FontWeight.w800),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: TextFormField(
-                      decoration: inputDecoration('Enter startpont name',
-                          'Startpont name', startpointNameCtrl),
-                      controller: startpointNameCtrl,
-                      validator: (value) {
-                        if (value.isEmpty) return 'Value is empty';
-                        return null;
-                      },
-                    ),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: TextFormField(
-                      decoration: inputDecoration('Enter endpoint name',
-                          'Endpoint name', endpointNameCtrl),
-                      controller: endpointNameCtrl,
-                      validator: (value) {
-                        if (value.isEmpty) return 'Value is empty';
-                        return null;
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              TextFormField(
-                decoration:
-                    inputDecoration('Enter travel cost', 'Price', priceCtrl),
-                keyboardType: TextInputType.number,
-                controller: priceCtrl,
-                validator: (value) {
-                  if (value.isEmpty) return 'Value is empty';
-                  return null;
-                },
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: TextFormField(
-                      decoration: inputDecoration('Enter startpoint latitude',
-                          'Startpoint latitude', startpointLatCtrl),
-                      controller: startpointLatCtrl,
-                      keyboardType: TextInputType.number,
-                      validator: (value) {
-                        if (value.isEmpty) return 'Value is empty';
-                        return null;
-                      },
-                    ),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: TextFormField(
-                      decoration: inputDecoration('Enter startpoint longitude',
-                          'Startpoint longitude', startpointLngCtrl),
-                      keyboardType: TextInputType.number,
-                      controller: startpointLngCtrl,
-                      validator: (value) {
-                        if (value.isEmpty) return 'Value is empty';
-                        return null;
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: TextFormField(
-                      decoration: inputDecoration('Enter endpoint latitude',
-                          'Endpoint latitude', endpointLatCtrl),
-                      controller: endpointLatCtrl,
-                      keyboardType: TextInputType.number,
-                      validator: (value) {
-                        if (value.isEmpty) return 'Value is empty';
-                        return null;
-                      },
-                    ),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: TextFormField(
-                      decoration: inputDecoration('Enter endpoint longitude',
-                          'Endpoint longitude', endpointLngCtrl),
-                      keyboardType: TextInputType.number,
-                      controller: endpointLngCtrl,
-                      validator: (value) {
-                        if (value.isEmpty) return 'Value is empty';
-                        return null;
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              TextFormField(
-                decoration: InputDecoration(
-                    hintText:
-                        "Enter path list one by one by tapping 'Enter' everytime",
-                    border: OutlineInputBorder(),
-                    labelText: 'Paths list',
-                    helperText: _helperText,
-                    contentPadding:
-                        EdgeInsets.only(right: 0, left: 10, top: 15, bottom: 5),
-                    suffixIcon: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: CircleAvatar(
-                        radius: 15,
-                        backgroundColor: Colors.grey[300],
-                        child: IconButton(
-                            icon: Icon(
-                              Icons.clear,
-                              size: 15,
-                              color: Colors.blueAccent,
-                            ),
-                            onPressed: () {
-                              pathsCtrl.clear();
-                            }),
-                      ),
-                    )),
-                controller: pathsCtrl,
-                onFieldSubmitted: (String value) {
-                  if (value.length == 0) {
-                    setState(() {
-                      _helperText = "You can't put empty item is the list";
-                    });
-                  } else {
-                    setState(() {
-                      paths.add(value);
-                      _helperText = 'Added ${paths.length} items';
-                      print(paths);
-                    });
-                  }
-                },
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Container(
-                child: paths.length == 0
-                    ? Center(
-                        child: Text('No path list were added'),
-                      )
-                    : ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: paths.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return ListTile(
-                            leading: CircleAvatar(
-                              child: Text(index.toString()),
-                            ),
-                            title: Text(paths[index]),
-                            trailing: IconButton(
-                                icon: Icon(Icons.delete_outline),
-                                onPressed: () {
-                                  setState(() {
-                                    paths.remove(paths[index]);
-                                    _helperText = 'Added ${paths.length} items';
-                                  });
-                                }),
-                          );
-                        },
-                      ),
               ),
               SizedBox(
                 height: 100,
